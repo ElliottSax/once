@@ -6,9 +6,14 @@
 
 import React from 'react';
 import { Composition } from 'remotion';
-import { ExplainerVideo } from './compositions/ExplainerVideo';
+import { ExplainerVideo, ExplainerVideoProps } from './compositions/ExplainerVideo';
 
 export const RemotionRoot: React.FC = () => {
+  const defaultProps: ExplainerVideoProps = {
+    title: 'Sample Explainer Video',
+    scenes: [],
+  };
+
   return (
     <>
       <Composition
@@ -18,10 +23,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1920}
         height={1080}
-        defaultProps={{
-          title: 'Sample Explainer Video',
-          scenes: [],
-        }}
+        defaultProps={defaultProps}
       />
     </>
   );

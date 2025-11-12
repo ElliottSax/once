@@ -9,13 +9,13 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 
 export interface ExplainerVideoProps {
-  title: string;
-  scenes: any[]; // TODO: Define proper Scene type
+  title?: string;
+  scenes?: any[]; // TODO: Define proper Scene type
 }
 
 export const ExplainerVideo: React.FC<ExplainerVideoProps> = ({
-  title,
-  scenes,
+  title = 'Explainer Video',
+  scenes = [],
 }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();

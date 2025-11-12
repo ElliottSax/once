@@ -302,22 +302,42 @@ class VideoGenerator:
         quality: str
     ) -> Path:
         """Render video using Remotion"""
-        # TODO: Implement actual Remotion rendering
-        # For now, create placeholder
+        from src.services.remotion_service import RemotionService
 
         output_dir = self.workspace / request_id / "output"
         output_dir.mkdir(parents=True, exist_ok=True)
         video_path = output_dir / f"{request_id}.mp4"
 
-        logger.warning(
-            "Remotion rendering not yet implemented. "
-            "This would normally call: npx remotion render ..."
-        )
+        # Check if Remotion is available
+        remotion_service = RemotionService()
+        is_available = await remotion_service.check_remotion_available()
 
-        # Create placeholder file
-        video_path.write_text("Placeholder video file")
+        if not is_available:
+            logger.warning(
+                "Remotion not available. "
+                "Install with: cd remotion && npm install"
+            )
+            # Create placeholder for testing
+            video_path.write_text("Placeholder - Remotion not installed")
+            return video_path
 
-        return video_path
+        # Render with Remotion
+        try:
+            video_path = await remotion_service.render_video(
+                video_data_path=remotion_data_path,
+                output_path=video_path,
+                composition_id="FullVideo",
+                quality=quality
+            )
+
+            logger.info(f"Video rendered successfully: {video_path}")
+            return video_path
+
+        except Exception as e:
+            logger.error(f"Remotion rendering failed: {e}")
+            # Create error placeholder
+            video_path.write_text(f"Rendering failed: {e}")
+            raise
 
     def _calculate_costs(
         self,

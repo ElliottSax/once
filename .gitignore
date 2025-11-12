@@ -184,7 +184,8 @@ credentials/
 # ============================================================================
 
 # Large model files (download separately)
-models/
+# Note: src/models/ contains Python code and SHOULD be committed
+/models/
 *.pt
 *.pth
 *.onnx

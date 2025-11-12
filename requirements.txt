@@ -45,6 +45,8 @@ redis==5.0.1
 
 # Database
 psycopg2-binary==2.9.9  # PostgreSQL
+sqlalchemy==2.0.23  # ORM
+alembic==1.13.1  # Database migrations
 
 # Workflow Orchestration
 temporalio==1.5.0  # Fixed: correct package name is 'temporalio' not 'temporal-sdk'

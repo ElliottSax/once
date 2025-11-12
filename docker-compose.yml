@@ -1,0 +1,149 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: video-gen-postgres
+    environment:
+      POSTGRES_DB: video_db
+      POSTGRES_USER: video_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-video_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U video_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Temporal Server
+  temporal:
+    image: temporalio/auto-setup:latest
+    container_name: video-gen-temporal
+    ports:
+      - "7233:7233"  # Temporal gRPC
+      - "8080:8080"  # Temporal Web UI
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=video_user
+      - POSTGRES_PWD=${POSTGRES_PASSWORD:-video_pass}
+      - POSTGRES_SEEDS=postgres
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: video-gen-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Database Migrations
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: video-gen-migrations
+    environment:
+      - DATABASE_URL=postgresql://video_user:${POSTGRES_PASSWORD:-video_pass}@postgres:5432/video_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: alembic upgrade head
+    restart: on-failure
+
+  # API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: video-gen-api
+    ports:
+      - "8000:8000"
+    environment:
+      # Database
+      - DATABASE_URL=postgresql://video_user:${POSTGRES_PASSWORD:-video_pass}@postgres:5432/video_db
+      - REDIS_URL=redis://redis:6379
+
+      # API Keys (set these in .env)
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+
+      # AWS (optional)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_S3_BUCKET_ASSETS=${AWS_S3_BUCKET_ASSETS:-video-gen-assets}
+      - AWS_S3_BUCKET_VIDEOS=${AWS_S3_BUCKET_VIDEOS:-video-gen-videos}
+      - AWS_S3_BUCKET_CACHE=${AWS_S3_BUCKET_CACHE:-video-gen-cache}
+
+      # Application
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - MAX_COST_PER_VIDEO=20.0
+      - DAILY_BUDGET_LIMIT=200.0
+
+    volumes:
+      - ./workspace:/workspace
+      - ./remotion:/app/remotion
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    command: uvicorn src.api.main_db:app --host 0.0.0.0 --port 8000
+
+  # Temporal Worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: video-gen-worker
+    environment:
+      # Same as API
+      - DATABASE_URL=postgresql://video_user:${POSTGRES_PASSWORD:-video_pass}@postgres:5432/video_db
+      - REDIS_URL=redis://redis:6379
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_S3_BUCKET_ASSETS=${AWS_S3_BUCKET_ASSETS:-video-gen-assets}
+      - AWS_S3_BUCKET_VIDEOS=${AWS_S3_BUCKET_VIDEOS:-video-gen-videos}
+      - AWS_S3_BUCKET_CACHE=${AWS_S3_BUCKET_CACHE:-video-gen-cache}
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./workspace:/workspace
+      - ./remotion:/app/remotion
+    depends_on:
+      postgres:
+        condition: service_healthy
+      temporal:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    command: python -m src.workflows.worker
+
+volumes:
+  postgres_data:
+  redis_data:

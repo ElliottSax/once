@@ -1,0 +1,71 @@
+# Automated YouTube Explainer Video System - Python Dependencies
+# Version: 1.0.0
+
+# Core Framework
+asyncio-throttle==1.0.2
+
+# AI/ML - Content Intelligence
+spacy==3.7.2
+transformers==4.36.0
+textstat==0.7.3
+numpy==1.26.2
+
+# AI APIs
+openai==1.6.1
+replicate==0.22.0
+aiohttp==3.9.1
+
+# Audio Processing
+whisper-timestamped==1.14.2
+openai-whisper==20231117
+librosa==0.10.1
+pyloudnorm==0.1.1
+pydub==0.25.1
+soundfile==0.12.1
+
+# Video Processing
+ffmpeg-python==0.2.0
+opencv-python==4.8.1.78
+scikit-image==0.22.0
+
+# Image Processing
+Pillow==10.1.0
+
+# NLP Models (download separately)
+# python -m spacy download en_core_web_trf
+
+# Data Processing
+pandas==2.1.4
+pydantic==2.5.3
+
+# Storage & Caching
+boto3==1.34.13  # AWS S3
+redis==5.0.1
+
+# Database
+psycopg2-binary==2.9.9  # PostgreSQL
+
+# Workflow Orchestration
+temporal-sdk==1.5.0
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+
+# Code Quality
+black==23.12.1
+flake8==6.1.0
+mypy==1.7.1
+isort==5.13.2
+
+# Utilities
+python-dotenv==1.0.0
+click==8.1.7
+tqdm==4.66.1
+loguru==0.7.2
+
+# Development
+ipython==8.18.1
+jupyter==1.0.0

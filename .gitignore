@@ -1,0 +1,237 @@
+# Automated YouTube Explainer Video System - Git Ignore
+
+# ============================================================================
+# Python
+# ============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ============================================================================
+# Node.js / TypeScript / Remotion
+# ============================================================================
+
+# Dependencies
+node_modules/
+remotion/node_modules/
+
+# Build outputs
+remotion/dist/
+remotion/out/
+remotion/.remotion/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# TypeScript
+*.tsbuildinfo
+
+# ============================================================================
+# Environment & Secrets
+# ============================================================================
+
+.env
+.env.local
+.env.*.local
+.env.production
+*.pem
+*.key
+secrets/
+credentials/
+
+# ============================================================================
+# Video Production Outputs
+# ============================================================================
+
+# Generated videos
+/output/**/*.mp4
+/output/**/*.mov
+/output/**/*.avi
+/renders/
+/exports/
+
+# Intermediate files
+/tmp/
+/temp/
+/cache/
+*.tmp
+
+# Checkpoints
+**/checkpoints/
+**/*.checkpoint
+
+# Generated assets
+/assets/generated/
+/assets/cache/
+
+# Thumbnails
+**/thumbnails/
+
+# ============================================================================
+# Database
+# ============================================================================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL
+*.pgsql
+
+# ============================================================================
+# AWS / Cloud
+# ============================================================================
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
+# AWS credentials
+.aws/
+
+# ============================================================================
+# Machine Learning Models
+# ============================================================================
+
+# Large model files (download separately)
+models/
+*.pt
+*.pth
+*.onnx
+*.h5
+*.pb
+
+# spaCy models (download with: python -m spacy download)
+# Exclude from git, install via package manager
+
+# ============================================================================
+# Logs & Monitoring
+# ============================================================================
+
+logs/
+*.log
+
+# ============================================================================
+# Documentation builds
+# ============================================================================
+
+docs/_build/
+docs/.doctrees/
+
+# ============================================================================
+# Development artifacts
+# ============================================================================
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# profiling
+*.prof
+
+# ============================================================================
+# OS-specific
+# ============================================================================
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*

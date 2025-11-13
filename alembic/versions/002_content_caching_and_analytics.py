@@ -129,7 +129,7 @@ def upgrade() -> None:
         BEGIN
             NEW.search_vector :=
                 setweight(to_tsvector('english', COALESCE(NEW.topic, '')), 'A') ||
-                setweight(to_tsvector('english', COALESCE(NEW.raw_script, '')), 'B');
+                setweight(to_tsvector('english', COALESCE(NEW.script_text, '')), 'B');
             RETURN NEW;
         END;
         $$ LANGUAGE plpgsql;
